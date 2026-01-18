@@ -9,79 +9,79 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --primary: #6C63FF; --success: #22C55E; }
-        body { background-color: #F8FAFC; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #F8FAFC; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
         
-        /* ⏳ Full Screen Loading Overlay [cite: 2026-01-18] */
+        /* ⏳ Full Screen Status Overlay [cite: 2026-01-18] */
         #statusOverlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.98); z-index: 9999;
-            flex-direction: column; align-items: center; justify-content: center;
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: white; z-index: 99999; flex-direction: column; align-items: center; justify-content: center;
         }
 
         .loader-ring {
-            width: 70px; height: 70px; border: 6px solid #f3f3f3;
-            border-top: 6px solid var(--primary); border-radius: 50%;
+            width: 60px; height: 60px; border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary); border-radius: 50%;
             animation: spin 1s linear infinite;
         }
         
-        .success-icon { display: none; color: var(--success); font-size: 70px; }
-
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        .form-card { background: white; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.05); }
-        .input-box { width: 100%; padding: 15px; background: #F1F5F9; border-radius: 12px; border: 2px solid transparent; transition: 0.3s; outline: none; }
+        .form-card { background: white; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .input-box { width: 100%; padding: 14px; background: #F1F5F9; border-radius: 12px; border: 2px solid transparent; outline: none; }
         .input-box:focus { border-color: var(--primary); background: white; }
     </style>
 </head>
 <body class="pb-24">
 
     <div id="statusOverlay">
-        <div id="loaderRing" class="loader-ring mb-4"></div>
-        <div id="successCheck" class="success-icon mb-4"><i class="fas fa-check-circle"></i></div>
-        <h2 id="statusText" class="text-2xl font-black text-gray-800">Publishing...</h2>
-        <p id="statusSubtext" class="text-gray-400">Please don't close the app</p>
+        <div id="loaderUI" class="flex flex-col items-center">
+            <div class="loader-ring mb-4"></div>
+            <h2 id="statusText" class="text-xl font-black text-gray-800 tracking-tight">Syncing Cloud...</h2>
+            <p id="progressPercent" class="text-[#6C63FF] font-bold text-lg mt-2">0%</p>
+        </div>
+        <div id="successUI" class="hidden flex flex-col items-center">
+            <i class="fas fa-check-circle text-6xl text-green-500 mb-4"></i>
+            <h2 class="text-xl font-black text-gray-800">Post is Now Live!</h2>
+        </div>
     </div>
 
-    <div class="max-w-xl mx-auto mt-8 px-4">
-        <div class="form-card p-8">
-            <header class="mb-8 flex justify-between items-center">
-                <h1 class="text-2xl font-black text-gray-800 uppercase tracking-tighter">New Listing</h1>
-                <i class="fas fa-bolt text-[#6C63FF]"></i>
+    <div class="max-w-xl mx-auto mt-6 px-4">
+        <div class="form-card p-6 md:p-8">
+            <header class="mb-6 flex justify-between items-center">
+                <h1 class="text-xl font-black text-gray-800 italic uppercase">Flix Market</h1>
+                <span class="bg-indigo-50 text-[#6C63FF] text-[10px] px-3 py-1 rounded-full font-bold">POST AD</span>
             </header>
 
-            <form id="listingForm" class="space-y-6">
-                <div id="uploadBox" class="relative border-2 border-dashed border-gray-200 rounded-3xl p-10 text-center cursor-pointer hover:border-[#6C63FF] transition-all bg-gray-50/50">
+            <form id="listingForm" class="space-y-4">
+                <div id="uploadBox" class="relative border-2 border-dashed border-gray-200 rounded-2xl p-6 text-center cursor-pointer hover:border-[#6C63FF] bg-gray-50/50">
                     <div id="previewWrap" class="hidden">
-                        <img id="imgPreview" class="h-44 mx-auto rounded-2xl shadow-lg border-4 border-white object-cover">
-                        <p id="imgStatus" class="text-[10px] font-bold mt-2 text-gray-400 uppercase tracking-widest">Processing Image...</p>
+                        <img id="imgPreview" class="h-40 mx-auto rounded-xl shadow-md object-cover">
+                        <p id="imgStatus" class="text-[10px] font-bold mt-2 text-gray-400 uppercase tracking-widest">Selected</p>
                     </div>
                     <div id="uploadPrompt">
-                        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-[#6C63FF]">
-                            <i class="fas fa-camera text-2xl"></i>
-                        </div>
-                        <p class="font-bold text-gray-700">Add Photo</p>
+                        <i class="fas fa-camera text-3xl text-gray-300 mb-2"></i>
+                        <p class="font-bold text-gray-500 text-sm">Select Product Photo</p>
                     </div>
                     <input type="file" id="fileInput" accept="image/*" class="hidden">
                 </div>
 
-                <div class="grid gap-4">
+                <div class="space-y-3">
                     <input type="text" id="title" placeholder="Title" class="input-box font-bold" required>
-                    <div class="flex gap-4">
+                    <div class="flex gap-2">
                         <input type="number" id="price" placeholder="Price" class="input-box flex-1 font-bold text-[#6C63FF]" required>
-                        <select id="category" class="input-box w-1/3 text-sm font-semibold">
+                        <select id="category" class="input-box w-1/3 text-xs font-bold">
                             <option value="electronics">Electronics</option>
                             <option value="vehicles">Vehicles</option>
                             <option value="fashion">Fashion</option>
                         </select>
                     </div>
-                    <input type="url" id="buyUrl" placeholder="Website Link (Optional)" class="input-box">
-                    <input type="tel" id="phone" placeholder="WhatsApp Number" class="input-box font-bold" required>
+                    <input type="url" id="buyUrl" placeholder="Website Link (Optional)" class="input-box text-sm">
+                    <input type="tel" id="phone" placeholder="WhatsApp (e.g. 923...)" class="input-box font-bold" required>
                     <input type="text" id="city" placeholder="City" class="input-box" required>
-                    <textarea id="desc" placeholder="Describe your item..." class="input-box h-24 resize-none"></textarea>
+                    <textarea id="desc" placeholder="Details..." class="input-box h-20 resize-none"></textarea>
                 </div>
 
-                <button type="submit" id="submitBtn" class="w-full bg-[#6C63FF] text-white py-4 rounded-2xl font-black shadow-xl hover:shadow-indigo-200 transition-all active:scale-95 uppercase tracking-widest">
-                    Post Now
+                <button type="submit" id="submitBtn" class="w-full bg-[#6C63FF] text-white py-4 rounded-xl font-black shadow-lg uppercase tracking-widest">
+                    Publish Now
                 </button>
             </form>
         </div>
@@ -90,82 +90,100 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyBMK252DCWEfxmancNHZ5kqdoNTRgbok7A", databaseURL: "https://flix-market-default-rtdb.firebaseio.com", projectId: "flix-market" };
+        const firebaseConfig = { 
+            apiKey: "AIzaSyBMK252DCWEfxmancNHZ5kqdoNTRgbok7A", 
+            databaseURL: "https://flix-market-default-rtdb.firebaseio.com", 
+            projectId: "flix-market" 
+        };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
 
-        let currentUser = null;
-        let finalImageUrl = "";
-        onAuthStateChanged(auth, (user) => { if (!user) window.location.href = 'auth.html'; else currentUser = user; });
-
         const fileInput = document.getElementById('fileInput');
+        const overlay = document.getElementById('statusOverlay');
+        const progressPercent = document.getElementById('progressPercent');
+        let cloudinaryUrl = "";
+
         document.getElementById('uploadBox').onclick = () => fileInput.click();
 
-        // 📸 Handle Upload [cite: 2026-01-18]
-        fileInput.onchange = async (e) => {
+        // 📸 Preview logic only [cite: 2026-01-18]
+        fileInput.onchange = (e) => {
             const file = e.target.files[0];
             if (!file) return;
-
-            document.getElementById('previewWrap').classList.remove('hidden');
-            document.getElementById('uploadPrompt').classList.add('hidden');
-            
             const reader = new FileReader();
-            reader.onload = (ev) => { document.getElementById('imgPreview').src = ev.target.result; };
+            reader.onload = (ev) => {
+                document.getElementById('imgPreview').src = ev.target.result;
+                document.getElementById('previewWrap').classList.remove('hidden');
+                document.getElementById('uploadPrompt').classList.add('hidden');
+            };
             reader.readAsDataURL(file);
+        };
 
+        // 🚀 Submit: First Upload to Cloudinary, then Save to Firebase [cite: 2026-01-18]
+        document.getElementById('listingForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const file = fileInput.files[0];
+            if(!file) return alert("Please select a photo first!");
+
+            // Show Loading Screen [cite: 2026-01-18]
+            overlay.style.display = 'flex';
+            document.getElementById('statusText').innerText = "Uploading Photo...";
+
+            // 1. Upload using XHR for progress tracking [cite: 2026-01-18]
             const formData = new FormData();
             formData.append('file', file);
             formData.append('upload_preset', 'ed6adf2f-027f-4a5a-a6dd-39438c909da7');
 
-            try {
-                const res = await fetch('https://api.cloudinary.com/v1_1/drwhtmufj/image/upload', { method: 'POST', body: formData });
-                const data = await res.json();
-                finalImageUrl = data.secure_url;
-                document.getElementById('imgStatus').innerText = "✅ Cloud Sync Ready";
-                document.getElementById('imgStatus').style.color = "#22C55E";
-            } catch (err) {
-                document.getElementById('imgStatus').innerText = "❌ Upload Failed";
-            }
-        };
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'https://api.cloudinary.com/v1_1/drwhtmufj/image/upload', true);
 
-        // 🚀 Submit Logic (No Alerts) [cite: 2026-01-18]
-        document.getElementById('listingForm').onsubmit = async (e) => {
-            e.preventDefault();
-            if(!finalImageUrl) return;
-
-            const overlay = document.getElementById('statusOverlay');
-            overlay.style.display = 'flex';
-
-            const adData = {
-                title: document.getElementById('title').value,
-                price: document.getElementById('price').value,
-                category: document.getElementById('category').value,
-                buyUrl: document.getElementById('buyUrl').value,
-                phone: document.getElementById('phone').value,
-                city: document.getElementById('city').value,
-                description: document.getElementById('desc').value,
-                imageUrl: finalImageUrl,
-                userId: currentUser.uid,
-                createdAt: Date.now()
+            xhr.upload.onprogress = (e) => {
+                if (e.lengthComputable) {
+                    const percent = Math.round((e.loaded / e.total) * 100);
+                    progressPercent.innerText = percent + "%";
+                }
             };
 
-            try {
-                await set(push(ref(db, 'listings')), adData);
-                
-                // Show Success Screen [cite: 2026-01-18]
-                document.getElementById('loaderRing').style.display = 'none';
-                document.getElementById('successCheck').style.display = 'block';
-                document.getElementById('statusText').innerText = "Ad is Live!";
-                document.getElementById('statusSubtext').innerText = "Redirecting to Market...";
-                
-                setTimeout(() => { window.location.href = 'index.html'; }, 2000);
-            } catch (err) {
-                overlay.style.display = 'none';
-                console.error(err);
-            }
+            xhr.onload = async function() {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    cloudinaryUrl = response.secure_url;
+                    
+                    // 2. Save to Firebase [cite: 2026-01-18]
+                    document.getElementById('statusText').innerText = "Finalizing Ad...";
+                    
+                    const adData = {
+                        title: document.getElementById('title').value,
+                        price: document.getElementById('price').value,
+                        category: document.getElementById('category').value,
+                        buyUrl: document.getElementById('buyUrl').value,
+                        phone: document.getElementById('phone').value,
+                        city: document.getElementById('city').value,
+                        description: document.getElementById('desc').value,
+                        imageUrl: cloudinaryUrl,
+                        userId: auth.currentUser.uid,
+                        createdAt: Date.now()
+                    };
+
+                    try {
+                        await set(push(ref(db, 'listings')), adData);
+                        // Show Success UI [cite: 2026-01-18]
+                        document.getElementById('loaderUI').classList.add('hidden');
+                        document.getElementById('successUI').classList.remove('hidden');
+                        setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+                    } catch (err) {
+                        overlay.style.display = 'none';
+                        alert("Error saving: " + err.message);
+                    }
+                } else {
+                    overlay.style.display = 'none';
+                    alert("Cloudinary Upload Failed! Check preset settings.");
+                }
+            };
+
+            xhr.send(formData);
         };
     </script>
 </body>

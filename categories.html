@@ -4,809 +4,121 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Categories - Flix Market</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        :root {
-            --primary: #6C63FF;
-            --secondary: #FF6584;
-            --dark: #2D3748;
-            --light: #F7FAFC;
-            --gray: #A0AEC0;
-            --success: #48BB78;
-        }
-
-        body {
-            background-color: var(--light);
-            color: var(--dark);
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header Styles */
-        header {
-            background: linear-gradient(135deg, var(--primary), #8A84FF);
-            color: white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 28px;
-            font-weight: 700;
-        }
-
-        .logo i {
-            font-size: 32px;
-        }
-
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 25px;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: white;
-            font-weight: 500;
-            transition: all 0.3s;
-            padding: 8px 12px;
-            border-radius: 4px;
-        }
-
-        nav a:hover, nav a.active {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .user-actions {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: none;
-            font-size: 16px;
-        }
-
-        .btn-primary {
-            background-color: white;
-            color: var(--primary);
-        }
-
-        .btn-primary:hover {
-            background-color: #f0f0f0;
-            transform: translateY(-2px);
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            border: 2px solid white;
-            color: white;
-        }
-
-        .btn-outline:hover {
-            background-color: white;
-            color: var(--primary);
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            padding: 8px 15px;
-            border-radius: 6px;
-            transition: background-color 0.3s;
-        }
-
-        .user-profile:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--secondary), #FF8FA0);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            overflow: hidden;
-        }
-
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* Page Header */
-        .page-header {
-            background: linear-gradient(135deg, var(--primary), #8A84FF);
-            color: white;
-            padding: 60px 0;
-            text-align: center;
-            border-radius: 0 0 20px 20px;
-            margin-bottom: 40px;
-        }
-
-        .page-header h1 {
-            font-size: 42px;
-            margin-bottom: 15px;
-        }
-
-        .page-header p {
-            font-size: 18px;
-            max-width: 600px;
-            margin: 0 auto;
-            opacity: 0.9;
-        }
-
-        /* Categories Grid */
-        .categories-section {
-            padding: 40px 0;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .section-title h2 {
-            font-size: 36px;
-            color: var(--dark);
-            margin-bottom: 10px;
-        }
-
-        .section-title p {
-            color: var(--gray);
-            font-size: 18px;
-        }
-
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-        }
-
-        .category-card {
-            background: white;
-            border-radius: 12px;
-            padding: 30px 20px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s;
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
-
-        .category-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-            border-color: var(--primary);
-        }
-
-        .category-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 20px;
-            background: linear-gradient(135deg, var(--primary), #8A84FF);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 32px;
-        }
-
-        .category-card h3 {
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
-
-        .category-card p {
-            color: var(--gray);
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-
-        .item-count {
-            background: var(--light);
-            color: var(--primary);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        /* Listings Section */
-        .listings-section {
-            padding: 40px 0;
-        }
-
-        .listings-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .filter-options {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .filter-select {
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            background: white;
-            font-size: 14px;
-        }
-
-        .posts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-        }
-
-        .post-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s;
-        }
-
-        .post-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .post-image {
-            height: 200px;
-            background-color: var(--gray);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 40px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .post-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .post-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--secondary);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .post-content {
-            padding: 20px;
-        }
-
-        .post-title {
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 18px;
-        }
-
-        .post-price {
-            color: var(--primary);
-            font-weight: 700;
-            font-size: 22px;
-            margin-bottom: 10px;
-        }
-
-        .post-location {
-            color: var(--gray);
-            font-size: 14px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .post-actions {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .whatsapp-btn {
-            background-color: #25D366;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 6px;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-weight: 500;
-            transition: background 0.3s;
-        }
-
-        .whatsapp-btn:hover {
-            background-color: #128C7E;
-        }
-
-        /* Footer */
-        footer {
-            background-color: var(--dark);
-            color: white;
-            padding: 60px 0 20px;
-            margin-top: 60px;
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-
-        .footer-column {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .footer-column h3 {
-            margin-bottom: 20px;
-            font-size: 20px;
-        }
-
-        .footer-column ul {
-            list-style: none;
-        }
-
-        .footer-column li {
-            margin-bottom: 12px;
-        }
-
-        .footer-column a {
-            color: #ddd;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .footer-column a:hover {
-            color: white;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .social-links a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            transition: background 0.3s;
-        }
-
-        .social-links a:hover {
-            background: var(--primary);
-        }
-
-        .copyright {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: #aaa;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            nav ul {
-                gap: 15px;
-            }
-
-            .page-header h1 {
-                font-size: 36px;
-            }
-
-            .listings-header {
-                flex-direction: column;
-                gap: 20px;
-                align-items: flex-start;
-            }
-
-            .filter-options {
-                width: 100%;
-            }
-
-            .filter-select {
-                flex: 1;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .categories-grid, .posts-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .user-actions {
-                flex-direction: column;
-                width: 100%;
-            }
-
-            .user-actions .btn {
-                width: 100%;
-                text-align: center;
-            }
-        }
+        :root { --primary: #6C63FF; --secondary: #FF6584; }
+        body { background-color: #F7FAFC; font-family: 'Segoe UI', sans-serif; }
+        .category-tab { cursor: pointer; transition: 0.3s; }
+        .category-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .post-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; }
+        .post-card:hover { transform: translateY(-5px); }
+        .whatsapp-btn { background: #25D366; color: white; padding: 10px; border-radius: 6px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-bolt"></i>
-                    <span>Flix Market</span>
-                </div>
-                <nav>
-                    <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="categories.html" class="active">Categories</a></li>
-                        <li><a href="my-posts.html">My Posts</a></li>
-                        <li><a href="favorites.html">Favorites</a></li>
-                    </ul>
-                </nav>
-                <div class="user-actions">
-                    <button class="btn btn-outline" onclick="location.href='add-post.html'">Add Post</button>
-                    <div class="user-profile" onclick="location.href='profile.html'">
-                        <div class="avatar">
-                            <span>JD</span>
-                        </div>
-                        <span>John Doe</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
 
-    <!-- Page Header -->
-    <section class="page-header">
-        <div class="container">
-            <h1>Browse Categories</h1>
-            <p>Find exactly what you're looking for in our organized categories</p>
+    <nav class="bg-white shadow-md p-4 sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="text-2xl font-bold text-[#6C63FF] cursor-pointer" onclick="location.href='index.html'">
+                <i class="fas fa-bolt"></i> Flix Market
+            </div>
+            <button class="bg-[#6C63FF] text-white px-5 py-2 rounded-lg font-bold" onclick="location.href='add-post.html'">Post Ad</button>
         </div>
-    </section>
+    </nav>
 
-    <!-- Categories Section -->
-    <section class="categories-section">
-        <div class="container">
-            <div class="section-title">
-                <h2>All Categories</h2>
-                <p>Choose from our wide range of categories</p>
-            </div>
-            <div class="categories-grid">
-                <div class="category-card" onclick="filterCategory('electronics')">
-                    <div class="category-icon">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <h3>Electronics</h3>
-                    <p>Phones, Laptops, TVs, Cameras</p>
-                    <div class="item-count">1,248 items</div>
-                </div>
-                <div class="category-card" onclick="filterCategory('vehicles')">
-                    <div class="category-icon">
-                        <i class="fas fa-car"></i>
-                    </div>
-                    <h3>Vehicles</h3>
-                    <p>Cars, Bikes, Parts, Accessories</p>
-                    <div class="item-count">892 items</div>
-                </div>
-                <div class="category-card" onclick="filterCategory('property')">
-                    <div class="category-icon">
-                        <i class="fas fa-home"></i>
-                    </div>
-                    <h3>Property</h3>
-                    <p>Rent, Buy, Sell Properties</p>
-                    <div class="item-count">543 items</div>
-                </div>
-                <div class="category-card" onclick="filterCategory('fashion')">
-                    <div class="category-icon">
-                        <i class="fas fa-tshirt"></i>
-                    </div>
-                    <h3>Fashion</h3>
-                    <p>Clothing, Shoes, Accessories</p>
-                    <div class="item_count">2,156 items</div>
-                </div>
-                <div class="category-card" onclick="filterCategory('furniture')">
-                    <div class="category-icon">
-                        <i class="fas fa-couch"></i>
-                    </div>
-                    <h3>Furniture</h3>
-                    <p>Home & Office Furniture</p>
-                    <div class="item-count">734 items</div>
-                </div>
-                <div class="category-card" onclick="filterCategory('pets')">
-                    <div class="category-icon">
-                        <i class="fas fa-paw"></i>
-                    </div>
-                    <h3>Pets</h3>
-                    <p>Animals, Supplies, Food</p>
-                    <div class="item-count">421 items</div>
-                </div>
-                <div class="category-card" onclick="filterCategory('books')">
-                    <div class="category-icon">
-                        <i class="fas fa-book"></i>
-                    </div>
-                    <h3>Books</h3>
-                    <p>Textbooks, Novels, Magazines</p>
-                    <div class="item-count">1,087 items</div>
-                </div>
-                <div class="category-card" onclick="filterCategory('sports')">
-                    <div class="category-icon">
-                        <i class="fas fa-basketball-ball"></i>
-                    </div>
-                    <h3>Sports</h3>
-                    <p>Equipment, Gear, Apparel</p>
-                    <div class="item-count">658 items</div>
-                </div>
-            </div>
+    <div class="container mx-auto p-5">
+        <h2 class="text-3xl font-bold text-gray-800 mb-8">Browse by Category</h2>
+
+        <div class="flex flex-wrap gap-3 mb-10" id="tabsContainer">
+            <div class="category-tab px-6 py-2 border-2 border-gray-300 rounded-full font-semibold active" onclick="filterCategory('all', this)">All Items</div>
+            <div class="category-tab px-6 py-2 border-2 border-gray-300 rounded-full font-semibold" onclick="filterCategory('electronics', this)">Electronics</div>
+            <div class="category-tab px-6 py-2 border-2 border-gray-300 rounded-full font-semibold" onclick="filterCategory('vehicles', this)">Vehicles</div>
+            <div class="category-tab px-6 py-2 border-2 border-gray-300 rounded-full font-semibold" onclick="filterCategory('property', this)">Property</div>
+            <div class="category-tab px-6 py-2 border-2 border-gray-300 rounded-full font-semibold" onclick="filterCategory('fashion', this)">Fashion</div>
         </div>
-    </section>
 
-    <!-- Listings Section -->
-    <section class="listings-section">
-        <div class="container">
-            <div class="listings-header">
-                <div class="section-title" style="text-align: left; margin-bottom: 0;">
-                    <h2>All Listings</h2>
-                    <p>Browse through all available items</p>
-                </div>
-                <div class="filter-options">
-                    <select class="filter-select" id="categoryFilter">
-                        <option value="all">All Categories</option>
-                        <option value="electronics">Electronics</option>
-                        <option value="vehicles">Vehicles</option>
-                        <option value="property">Property</option>
-                        <option value="fashion">Fashion</option>
-                        <option value="furniture">Furniture</option>
-                        <option value="pets">Pets</option>
-                    </select>
-                    <select class="filter-select" id="sortFilter">
-                        <option value="newest">Newest First</option>
-                        <option value="price-low">Price: Low to High</option>
-                        <option value="price-high">Price: High to Low</option>
-                        <option value="popular">Most Popular</option>
-                    </select>
-                    <select class="filter-select" id="locationFilter">
-                        <option value="all">All Locations</option>
-                        <option value="new-york">New York</option>
-                        <option value="brooklyn">Brooklyn</option>
-                        <option value="queens">Queens</option>
-                        <option value="manhattan">Manhattan</option>
-                    </select>
-                </div>
-            </div>
-            <div class="posts-grid" id="postsContainer">
-                <!-- Posts will be dynamically added here -->
-            </div>
-        </div>
-    </section>
+        <div id="loader" class="text-center py-10 font-bold text-gray-500">Filtering database...</div>
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6" id="categoryGrid"></div>
+    </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>Flix Market</h3>
-                    <p>Your local marketplace to buy and sell items in your community. Simple, safe, and convenient.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-                <div class="footer-column">
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="categories.html">Categories</a></li>
-                        <li><a href="my-posts.html">My Account</a></li>
-                        <li><a href="#">Help & Support</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Contact Us</h3>
-                    <ul>
-                        <li><i class="fas fa-envelope"></i> support@flixmarket.com</li>
-                        <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
-                        <li><i class="fas fa-map-marker-alt"></i> 123 Market St, City, Country</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="copyright">
-                <p>&copy; 2023 Flix Market. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    <script>
-        // Sample data for posts
-        const samplePosts = [
-            {
-                id: 1,
-                title: "iPhone 13 Pro",
-                price: 850,
-                location: "New York, NY",
-                category: "electronics",
-                image: "https://images.unsplash.com/photo-1632661674598-5b38a82e7870?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                featured: true
-            },
-            {
-                id: 2,
-                title: "Office Desk",
-                price: 120,
-                location: "Brooklyn, NY",
-                category: "furniture",
-                image: "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-            },
-            {
-                id: 3,
-                title: "Vintage Leather Jacket",
-                price: 75,
-                location: "Queens, NY",
-                category: "fashion",
-                image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-            },
-            {
-                id: 4,
-                title: "Mountain Bike",
-                price: 320,
-                location: "Manhattan, NY",
-                category: "vehicles",
-                image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-            },
-            {
-                id: 5,
-                title: "German Shepherd Puppy",
-                price: 500,
-                location: "Bronx, NY",
-                category: "pets",
-                image: "https://images.unsplash.com/photo-1517423568366-8b83523034fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-            },
-            {
-                id: 6,
-                title: "Gaming Laptop",
-                price: 1100,
-                location: "Staten Island, NY",
-                category: "electronics",
-                image: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-            },
-            {
-                id: 7,
-                title: "Apartment for Rent",
-                price: 2200,
-                location: "Manhattan, NY",
-                category: "property",
-                image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-            },
-            {
-                id: 8,
-                title: "Designer Handbag",
-                price: 180,
-                location: "New York, NY",
-                category: "fashion",
-                image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+        const firebaseConfig = {
+            apiKey: "AIzaSyBMK252DCWEfxmancNHZ5kqdoNTRgbok7A",
+            authDomain: "flix-market.firebaseapp.com",
+            databaseURL: "https://flix-market-default-rtdb.firebaseio.com",
+            projectId: "flix-market",
+            storageBucket: "flix-market.firebasestorage.app",
+            messagingSenderId: "459532909263",
+            appId: "1:459532909263:web:a337f01f4d185d53e115ba"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        let allPosts = [];
+
+        // 🔍 Fetch Data once [cite: 2026-01-18]
+        const postsRef = ref(db, 'listings');
+        onValue(postsRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                allPosts = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+                
+                // Check URL for initial category [cite: 2026-01-18]
+                const urlParams = new URLSearchParams(window.location.search);
+                const cat = urlParams.get('category') || 'all';
+                
+                // Set initial tab UI
+                const tabs = document.querySelectorAll('.category-tab');
+                tabs.forEach(t => {
+                    if(t.innerText.toLowerCase().includes(cat)) {
+                        t.classList.add('active');
+                    } else { t.classList.remove('active'); }
+                });
+
+                displayPosts(cat);
             }
-        ];
+        });
 
-        // Initialize the page with sample posts
-        function initializePosts() {
-            const postsContainer = document.getElementById('postsContainer');
-            postsContainer.innerHTML = '';
-            
-            samplePosts.forEach(post => {
-                const postElement = document.createElement('div');
-                postElement.className = 'post-card';
-                postElement.innerHTML = `
-                    <div class="post-image">
-                        <img src="${post.image}" alt="${post.title}">
-                        ${post.featured ? '<div class="post-badge">Featured</div>' : ''}
-                    </div>
-                    <div class="post-content">
-                        <h3 class="post-title">${post.title}</h3>
-                        <div class="post-price">$${post.price}</div>
-                        <div class="post-location">
-                            <i class="fas fa-map-marker-alt"></i> ${post.location}
-                        </div>
-                        <div class="post-actions">
-                            <a href="https://wa.me/15551234567?text=Hi, I'm interested in your ${post.title} listed for $${post.price}" class="whatsapp-btn" target="_blank">
-                                <i class="fab fa-whatsapp"></i> Contact
+        // 🏷️ Display Logic [cite: 2026-01-18]
+        window.displayPosts = (category) => {
+            const container = document.getElementById('categoryGrid');
+            const loader = document.getElementById('loader');
+            container.innerHTML = '';
+            loader.style.display = 'none';
+
+            const filtered = category === 'all' ? allPosts : allPosts.filter(p => p.category === category);
+
+            if (filtered.length > 0) {
+                filtered.reverse().forEach(post => {
+                    const card = document.createElement('div');
+                    card.className = 'post-card';
+                    card.innerHTML = `
+                        <div class="h-48 overflow-hidden"><img src="${post.imageUrl}" class="w-full h-full object-cover"></div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg text-gray-800">${post.title}</h3>
+                            <div class="text-[#6C63FF] font-black text-xl my-2">Rs. ${post.price}</div>
+                            <div class="text-xs text-gray-500 mb-4"><i class="fas fa-map-marker-alt"></i> ${post.city}</div>
+                            <a href="https://wa.me/${post.phone}?text=Interested in ${post.title}" target="_blank" class="whatsapp-btn">
+                                <i class="fab fa-whatsapp"></i> WhatsApp
                             </a>
-                            <button class="btn btn-outline" style="color: var(--primary); border-color: var(--primary); padding: 8px 15px;">Save</button>
-                        </div>
-                    </div>
-                `;
-                postsContainer.appendChild(postElement);
-            });
-        }
+                        </div>`;
+                    container.appendChild(card);
+                });
+            } else {
+                container.innerHTML = '<p class="text-center col-span-full py-20 text-gray-400">No items found in this category.</p>';
+            }
+        };
 
-        // Filter by category
-        function filterCategory(category) {
-            document.getElementById('categoryFilter').value = category;
-            // In a real app, this would filter the posts
-            alert(`Filtering by ${category} category`);
-        }
-
-        // Add event listeners to filters
-        document.getElementById('categoryFilter').addEventListener('change', function() {
-            // Filter logic would go here
-            console.log('Category filter changed to:', this.value);
-        });
-
-        document.getElementById('sortFilter').addEventListener('change', function() {
-            // Sort logic would go here
-            console.log('Sort filter changed to:', this.value);
-        });
-
-        document.getElementById('locationFilter').addEventListener('change', function() {
-            // Location filter logic would go here
-            console.log('Location filter changed to:', this.value);
-        });
-
-        // Initialize the page
-        initializePosts();
+        window.filterCategory = (cat, element) => {
+            document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+            displayPosts(cat);
+        };
     </script>
 </body>
 </html>

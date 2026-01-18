@@ -7,7 +7,9 @@
     <title>Flix Market - Buy & Sell Locally</title>
     <meta name="description" content="Flix Market is the fastest way to buy and sell in your community. Real-time listings for electronics, cars, and more.">
     <meta name="keywords" content="flix market, buy sell locally, online marketplace pakistan, free ads">
-    <link rel="icon" type="image/png" href="icon.png"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="icon.png"> 
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root { --primary: #6C63FF; --secondary: #FF6584; --dark: #2D3748; }
@@ -18,13 +20,12 @@
         .shortcut-item { color: #A0AEC0; font-size: 20px; transition: 0.3s; position: relative; }
         .shortcut-item.active { color: var(--primary); }
         .shortcut-item:hover { color: var(--primary); transform: translateY(-3px); }
-        .shortcut-label { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 4px 10px; border-radius: 6px; font-size: 10px; opacity: 0; transition: 0.3s; pointer-events: none; white-space: nowrap; }
-        .shortcut-item:hover .shortcut-label { opacity: 1; top: -45px; }
+        .shortcut-label { position: absolute; top: -45px; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 4px 10px; border-radius: 6px; font-size: 10px; opacity: 0; transition: 0.3s; pointer-events: none; white-space: nowrap; }
+        .shortcut-item:hover .shortcut-label { opacity: 1; }
 
         .hero { background: linear-gradient(rgba(108, 99, 255, 0.8), rgba(108, 99, 255, 0.7)), url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80'); background-size: cover; padding: 60px 0; border-radius: 0 0 30px 30px; }
-        .post-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; }
+        .post-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; cursor: pointer; }
         .post-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
-        .whatsapp-btn { background: #25D366; color: white; padding: 10px; border-radius: 8px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 14px; }
     </style>
 </head>
 <body class="pb-24">
@@ -42,21 +43,11 @@
     </header>
 
     <div class="shortcut-bar">
-        <a href="index.html" class="shortcut-item active">
-            <i class="fas fa-home"></i><span class="shortcut-label">Home</span>
-        </a>
-        <a href="categories.html" class="shortcut-item">
-            <i class="fas fa-th-large"></i><span class="shortcut-label">Categories</span>
-        </a>
-        <a href="add-post.html" class="shortcut-item" style="color: var(--secondary); font-size: 26px;">
-            <i class="fas fa-plus-circle"></i><span class="shortcut-label">Sell Now</span>
-        </a>
-        <a href="favorites.html" class="shortcut-item">
-            <i class="fas fa-heart"></i><span class="shortcut-label">Favorites</span>
-        </a>
-        <a href="profile.html" class="shortcut-item">
-            <i class="fas fa-user"></i><span class="shortcut-label">Account</span>
-        </a>
+        <a href="index.html" class="shortcut-item active"><i class="fas fa-home"></i><span class="shortcut-label">Home</span></a>
+        <a href="categories.html" class="shortcut-item"><i class="fas fa-th-large"></i><span class="shortcut-label">Categories</span></a>
+        <a href="add-post.html" class="shortcut-item" style="color: var(--secondary); font-size: 26px;"><i class="fas fa-plus-circle"></i><span class="shortcut-label">Sell Now</span></a>
+        <a href="favorites.html" class="shortcut-item"><i class="fas fa-heart"></i><span class="shortcut-label">Favorites</span></a>
+        <a href="profile.html" class="shortcut-item"><i class="fas fa-user"></i><span class="shortcut-label">Account</span></a>
     </div>
 
     <section class="hero text-center text-white">
@@ -65,15 +56,15 @@
             <p class="text-lg opacity-90 mb-8">Buy and sell anything in seconds with Flix Market.</p>
             <div class="max-w-xl mx-auto flex bg-white rounded-full overflow-hidden shadow-xl">
                 <input type="text" id="searchInput" placeholder="Search phones, cars, houses..." class="flex-1 p-4 text-gray-800 outline-none">
-                <button class="bg-[#FF6584] px-6 text-white"><i class="fas fa-search"></i></button>
+                <button id="searchBtn" class="bg-[#FF6584] px-6 text-white"><i class="fas fa-search"></i></button>
             </div>
         </div>
     </section>
 
     <main class="container mx-auto px-4 py-10">
         <div class="flex justify-between items-center mb-8">
-            <h2 class="text-2xl font-bold text-gray-800">Recent Ads</h2>
-            <a href="categories.html" class="text-[#6C63FF] font-semibold">See All <i class="fas fa-arrow-right text-sm"></i></a>
+            <h2 class="text-2xl font-bold text-gray-800">Featured Ads</h2>
+            <a href="categories.html" class="text-[#6C63FF] font-semibold">View All</a>
         </div>
         
         <div id="loader" class="text-center py-20 text-gray-400 font-bold">Syncing Flix Realtime...</div>
@@ -99,7 +90,15 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // UI User Sync [cite: 2026-01-18]
+        // Search Redirection Logic [cite: 2026-01-18]
+        const performSearch = () => {
+            const query = document.getElementById('searchInput').value;
+            if(query) window.location.href = `search-result.html?q=${encodeURIComponent(query)}`;
+        };
+        document.getElementById('searchBtn').addEventListener('click', performSearch);
+        document.getElementById('searchInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') performSearch(); });
+
+        // User Profile Sync [cite: 2026-01-18]
         onAuthStateChanged(auth, (user) => {
             if(user) {
                 document.getElementById('authHeader').innerHTML = `
@@ -109,7 +108,7 @@
             }
         });
 
-        // Load Posts [cite: 2026-01-18]
+        // Load Posts with Redirection to post.html [cite: 2026-01-18]
         onValue(ref(db, 'listings'), (snap) => {
             const container = document.getElementById('postsContainer');
             const loader = document.getElementById('loader');
@@ -122,20 +121,17 @@
                     const post = data[key];
                     const card = document.createElement('div');
                     card.className = 'post-card';
+                    // Redirect to professional post preview [cite: 2026-01-18]
+                    card.onclick = () => window.location.href = `post.html?id=${key}`;
                     card.innerHTML = `
                         <div class="h-44 overflow-hidden"><img src="${post.imageUrl}" class="w-full h-full object-cover"></div>
                         <div class="p-4">
                             <h3 class="font-bold text-gray-800 truncate">${post.title}</h3>
                             <div class="text-[#6C63FF] font-black text-xl my-1">Rs. ${post.price}</div>
-                            <p class="text-xs text-gray-400 mb-4"><i class="fas fa-location-dot"></i> ${post.city}</p>
-                            <a href="https://wa.me/${post.phone}?text=Interested in ${post.title}" target="_blank" class="whatsapp-btn">
-                                <i class="fab fa-whatsapp"></i> WhatsApp
-                            </a>
+                            <p class="text-xs text-gray-400"><i class="fas fa-location-dot"></i> ${post.city}</p>
                         </div>`;
                     container.appendChild(card);
                 });
-            } else {
-                container.innerHTML = '<p class="text-center col-span-full py-10">No items available.</p>';
             }
         });
     </script>

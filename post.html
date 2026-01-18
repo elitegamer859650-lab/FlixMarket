@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - Flix Market</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #6C63FF; --secondary: #FF6584; }
+        body { background-color: #F8FAFC; font-family: 'Segoe UI', sans-serif; }
+        .product-card { background: white; border-radius: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.03); }
+        .btn-wa { background-color: #25D366; transition: 0.3s; }
+        .btn-wa:hover { background-color: #128C7E; transform: translateY(-2px); }
+        .btn-buy { background-color: #000000; transition: 0.3s; }
+        .btn-buy:hover { opacity: 0.8; transform: translateY(-2px); }
+    </style>
+</head>
+<body class="pb-10">
+
+    <nav class="p-4 bg-white shadow-sm flex items-center justify-between sticky top-0 z-50">
+        <div class="flex items-center gap-4">
+            <i class="fas fa-arrow-left text-xl cursor-pointer text-gray-600" onclick="history.back()"></i>
+            <span class="font-bold text-gray-800">Back to Market</span>
+        </div>
+        <div class="text-[#6C63FF] font-black"><i class="fas fa-bolt"></i> FLIX</div>
+    </nav>
+
+    <div id="loader" class="text-center py-20 font-bold text-gray-400">Fetching Details...</div>
+
+    <main id="mainContent" class="hidden container mx-auto px-4 mt-6">
+        <div class="grid lg:grid-cols-2 gap-8">
+            
+            <div class="product-card overflow-hidden">
+                <img id="postImg" src="" class="w-full h-[350px] md:h-[500px] object-cover">
+            </div>
+
+            <div class="flex flex-col justify-between">
+                <div class="product-card p-6 md:p-10 mb-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <h1 id="postTitle" class="text-3xl font-black text-gray-800 leading-tight"></h1>
+                        <button class="text-gray-300 text-2xl"><i class="far fa-heart"></i></button>
+                    </div>
+                    
+                    <div id="postPrice" class="text-4xl font-black text-[#6C63FF] mb-4"></div>
+                    
+                    <div class="flex items-center gap-2 text-gray-400 text-sm mb-6">
+                        <i class="fas fa-location-dot"></i>
+                        <span id="postLocation"></span>
+                    </div>
+
+                    <hr class="border-gray-100 mb-6">
+
+                    <h3 class="font-bold text-gray-800 mb-2">Description</h3>
+                    <p id="postDesc" class="text-gray-600 leading-relaxed text-sm md:text-base"></p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <a id="buyBtn" href="" target="_blank" class="hidden btn-buy text-white text-center py-5 rounded-2xl font-black shadow-lg uppercase tracking-wider">
+                        <i class="fas fa-shopping-bag mr-2"></i> Buy Now
+                    </a>
+                    <a id="waBtn" href="" target="_blank" class="btn-wa text-white text-center py-5 rounded-2xl font-black shadow-lg uppercase tracking-wider">
+                        <i class="fab fa-whatsapp mr-2 text-xl"></i> Contact Seller
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-10 p-6 bg-amber-50 rounded-2xl border border-amber-100 flex gap-4 items-center">
+            <i class="fas fa-shield-alt text-amber-500 text-2xl"></i>
+            <p class="text-xs text-amber-800">
+                <strong>Safety Tip:</strong> Never pay in advance. Always meet the seller in a public place to inspect the item before buying.
+            </p>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBMK252DCWEfxmancNHZ5kqdoNTRgbok7A",
+            authDomain: "flix-market.firebaseapp.com",
+            databaseURL: "https://flix-market-default-rtdb.firebaseio.com",
+            projectId: "flix-market",
+            storageBucket: "flix-market.firebasestorage.app",
+            messagingSenderId: "459532909263",
+            appId: "1:459532909263:web:a337f01f4d185d53e115ba"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Get ID from URL [cite: 2026-01-18]
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('id');
+
+        if(postId) {
+            const postRef = ref(db, `listings/${postId}`);
+            onValue(postRef, (snapshot) => {
+                const data = snapshot.val();
+                if(data) {
+                    document.title = `${data.title} - Flix Market`;
+                    document.getElementById('postImg').src = data.imageUrl;
+                    document.getElementById('postTitle').innerText = data.title;
+                    document.getElementById('postPrice').innerText = `Rs. ${Number(data.price).toLocaleString()}`;
+                    document.getElementById('postLocation').innerText = data.city;
+                    document.getElementById('postDesc').innerText = data.description || "No detailed description provided by the seller.";
+                    
+                    // Show Buy Now if URL exists [cite: 2026-01-18]
+                    if(data.buyUrl && data.buyUrl.trim() !== "") {
+                        const buyBtn = document.getElementById('buyBtn');
+                        buyBtn.href = data.buyUrl;
+                        buyBtn.classList.remove('hidden');
+                    }
+
+                    // WhatsApp Logic [cite: 2026-01-18]
+                    document.getElementById('waBtn').href = `https://wa.me/${data.phone}?text=Hello, I am interested in your listing: ${data.title} (Rs. ${data.price})`;
+
+                    document.getElementById('loader').classList.add('hidden');
+                    document.getElementById('mainContent').classList.remove('hidden');
+                } else {
+                    document.getElementById('loader').innerHTML = "<h2 class='text-red-500'>Ad not found or expired.</h2>";
+                }
+            });
+        }
+    </script>
+</body>
+</html>

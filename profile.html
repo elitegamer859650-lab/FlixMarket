@@ -7,119 +7,141 @@
     <link rel="icon" type="image/png" href="icon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
     <style>
         :root { --primary: #6C63FF; --secondary: #FF6584; }
         body { background-color: #F7FAFC; font-family: 'Segoe UI', sans-serif; }
-        
-        .profile-header { background: linear-gradient(135deg, var(--primary), #8A84FF); height: 200px; border-radius: 0 0 40px 40px; }
-        .avatar-large { width: 120px; height: 120px; border: 5px solid white; background: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px; color: white; margin-top: -60px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        
-        /* Floating Shortcut Menu [cite: 2026-01-18] */
-        .shortcut-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: white; padding: 10px 25px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: flex; gap: 20px; z-index: 1000; border: 1px solid rgba(108, 99, 255, 0.2); }
-        .shortcut-item { color: #A0AEC0; font-size: 20px; transition: 0.3s; position: relative; }
-        .shortcut-item:hover, .shortcut-item.active { color: var(--primary); }
-        .shortcut-label { position: absolute; top: -45px; left: 50%; transform: translateX(-50%); background: #2D3748; color: white; padding: 4px 10px; border-radius: 6px; font-size: 10px; opacity: 0; transition: 0.3s; pointer-events: none; white-space: nowrap; }
-        .shortcut-item:hover .shortcut-label { opacity: 1; }
-
-        .stat-card { background: white; border-radius: 20px; padding: 20px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .profile-header { background: linear-gradient(135deg, var(--primary), #8A84FF); height: 180px; border-radius: 0 0 40px 40px; }
+        .avatar-box { width: 110px; height: 110px; border: 4px solid white; background: #eee; border-radius: 50%; margin-top: -55px; position: relative; overflow: hidden; }
+        .avatar-box img { width: 100%; height: 100%; object-fit: cover; }
+        .edit-btn { position: absolute; bottom: 0; right: 0; background: var(--primary); color: white; padding: 5px; border-radius: 50%; font-size: 10px; cursor: pointer; }
+        .shortcut-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: white; padding: 10px 25px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: flex; gap: 20px; z-index: 1000; }
     </style>
 </head>
 <body class="pb-24">
 
     <div class="profile-header w-full"></div>
 
-    <div class="container mx-auto px-4">
-        <div class="flex flex-col items-center">
-            <div id="userAvatar" class="avatar-large font-bold">?</div>
-            <h2 id="userName" class="text-2xl font-bold mt-4 text-gray-800">Loading User...</h2>
-            <p id="userEmail" class="text-gray-500 mb-8">Please wait while we sync</p>
+    <div class="container mx-auto px-4 flex flex-col items-center">
+        <div class="avatar-box shadow-lg">
+            <img id="profileImg" src="https://via.placeholder.com/150" alt="Avatar">
+            <div id="changePic" class="edit-btn"><i class="fas fa-camera"></i></div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-8">
-            <div class="stat-card cursor-pointer" onclick="location.href='my-posts.html'">
-                <div class="text-3xl font-bold text-[#6C63FF]" id="postCount">0</div>
-                <div class="text-sm text-gray-500 uppercase font-bold tracking-widest">My Ads</div>
+        <div class="text-center mt-4 w-full max-w-sm">
+            <div class="flex items-center justify-center gap-2 group">
+                <h2 id="userName" class="text-2xl font-black text-gray-800">Loading...</h2>
+                <i id="openNameModal" class="fas fa-edit text-gray-300 cursor-pointer hover:text-[#6C63FF]"></i>
             </div>
-            <div class="stat-card cursor-pointer" onclick="location.href='favorites.html'">
-                <div class="text-3xl font-bold text-[#FF6584]">0</div>
-                <div class="text-sm text-gray-500 uppercase font-bold tracking-widest">Favorites</div>
-            </div>
+            <p id="userEmail" class="text-gray-400 text-sm"></p>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm overflow-hidden mb-6">
-            <div class="p-4 border-b flex justify-between items-center cursor-pointer hover:bg-gray-50" onclick="location.href='my-posts.html'">
+        <div class="w-full max-w-md mt-10 space-y-4">
+            <div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center cursor-pointer" onclick="location.href='my-posts.html'">
                 <div class="flex items-center gap-4">
-                    <i class="fas fa-list text-[#6C63FF]"></i>
-                    <span class="font-semibold">Manage My Listings</span>
+                    <i class="fas fa-shopping-bag text-[#6C63FF]"></i>
+                    <span class="font-bold">My Listings</span>
                 </div>
-                <i class="fas fa-chevron-right text-gray-300"></i>
+                <span id="postCount" class="bg-indigo-50 text-[#6C63FF] px-3 py-1 rounded-full text-xs font-bold">0</span>
             </div>
-            <div class="p-4 border-b flex justify-between items-center cursor-pointer hover:bg-gray-50">
-                <div class="flex items-center gap-4">
-                    <i class="fas fa-cog text-gray-400"></i>
-                    <span class="font-semibold">Account Settings</span>
-                </div>
-                <i class="fas fa-chevron-right text-gray-300"></i>
-            </div>
-            <div class="p-4 flex justify-between items-center cursor-pointer hover:bg-red-50 text-red-500" id="logoutBtn">
+
+            <div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center text-red-500 cursor-pointer" id="logoutBtn">
                 <div class="flex items-center gap-4">
                     <i class="fas fa-sign-out-alt"></i>
-                    <span class="font-bold">Log Out</span>
+                    <span class="font-bold">Logout</span>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="nameModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[2000] p-4">
+        <div class="bg-white p-6 rounded-2xl w-full max-w-xs shadow-2xl text-center">
+            <h3 class="font-bold mb-4">Update Display Name</h3>
+            <input type="text" id="newNameInput" class="w-full p-3 border rounded-xl mb-4 outline-none" placeholder="Enter name...">
+            <div class="flex gap-2">
+                <button id="closeModal" class="flex-1 py-2 text-gray-500">Cancel</button>
+                <button id="saveName" class="flex-1 py-2 bg-[#6C63FF] text-white rounded-lg">Save</button>
             </div>
         </div>
     </div>
 
     <div class="shortcut-bar">
-        <a href="index.html" class="shortcut-item"><i class="fas fa-home"></i><span class="shortcut-label">Home</span></a>
-        <a href="categories.html" class="shortcut-item"><i class="fas fa-th-large"></i><span class="shortcut-label">Categories</span></a>
-        <a href="add-post.html" class="shortcut-item" style="color: var(--secondary); font-size: 26px;"><i class="fas fa-plus-circle"></i><span class="shortcut-label">Sell</span></a>
-        <a href="favorites.html" class="shortcut-item"><i class="fas fa-heart"></i><span class="shortcut-label">Favorites</span></a>
-        <a href="profile.html" class="shortcut-item active"><i class="fas fa-user"></i><span class="shortcut-label">Account</span></a>
+        <a href="index.html" class="text-gray-400 text-xl"><i class="fas fa-home"></i></a>
+        <a href="categories.html" class="text-gray-400 text-xl"><i class="fas fa-th-large"></i></a>
+        <a href="add-post.html" class="text-gray-400 text-xl"><i class="fas fa-plus-circle"></i></a>
+        <a href="profile.html" class="text-[#6C63FF] text-xl"><i class="fas fa-user"></i></a>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, query, orderByChild, equalTo, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, onValue, set, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBMK252DCWEfxmancNHZ5kqdoNTRgbok7A",
             authDomain: "flix-market.firebaseapp.com",
             databaseURL: "https://flix-market-default-rtdb.firebaseio.com",
-            projectId: "flix-market",
-            storageBucket: "flix-market.firebasestorage.app",
-            messagingSenderId: "459532909263",
-            appId: "1:459532909263:web:a337f01f4d185d53e115ba"
+            projectId: "flix-market"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // Auth & Profile Sync [cite: 2026-01-18]
         onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.getElementById('userName').innerText = user.email.split('@')[0].toUpperCase();
+            if (!user) window.location.href = 'auth.html';
+            else {
                 document.getElementById('userEmail').innerText = user.email;
-                document.getElementById('userAvatar').innerText = user.email[0].toUpperCase();
-
+                document.getElementById('userName').innerText = user.displayName || "No Name Set";
+                if(user.photoURL) document.getElementById('profileImg').src = user.photoURL;
+                
                 // Get Post Count [cite: 2026-01-18]
-                const postsRef = ref(db, 'listings');
-                const userPostsQuery = query(postsRef, orderByChild('userId'), equalTo(user.uid));
-                onValue(userPostsQuery, (snapshot) => {
-                    const count = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+                onValue(ref(db, 'listings'), (snap) => {
+                    let count = 0;
+                    if(snap.val()) {
+                        Object.values(snap.val()).forEach(post => { if(post.userId === user.uid) count++; });
+                    }
                     document.getElementById('postCount').innerText = count;
                 });
-            } else {
-                window.location.href = 'auth.html'; // Redirect if not logged in [cite: 2026-01-18]
             }
         });
 
-        // Logout Logic [cite: 2026-01-18]
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            signOut(auth).then(() => window.location.href = 'index.html');
+        // ☁️ Update Profile Picture (Cloudinary) [cite: 2026-01-18]
+        document.getElementById('changePic').addEventListener('click', () => {
+            cloudinary.openUploadWidget({
+                cloudName: 'drwhtmufj', 
+                uploadPreset: 'ed6adf2f-027f-4a5a-a6dd-39438c909da7',
+                multiple: false,
+                cropping: true
+            }, async (error, result) => {
+                if (!error && result.event === "success") {
+                    const newUrl = result.info.secure_url;
+                    await updateProfile(auth.currentUser, { photoURL: newUrl });
+                    document.getElementById('profileImg').src = newUrl;
+                    alert("Profile picture updated!");
+                }
+            });
         });
+
+        // 📝 Update Name Modal Logic [cite: 2026-01-18]
+        const modal = document.getElementById('nameModal');
+        document.getElementById('openNameModal').onclick = () => {
+            document.getElementById('newNameInput').value = auth.currentUser.displayName || "";
+            modal.style.display = 'flex';
+        };
+        document.getElementById('closeModal').onclick = () => modal.style.display = 'none';
+        
+        document.getElementById('saveName').onclick = async () => {
+            const newName = document.getElementById('newNameInput').value;
+            if(newName) {
+                await updateProfile(auth.currentUser, { displayName: newName });
+                document.getElementById('userName').innerText = newName;
+                modal.style.display = 'none';
+                alert("Profile name updated!");
+            }
+        };
+
+        document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => location.href='index.html');
     </script>
 </body>
 </html>

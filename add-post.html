@@ -108,18 +108,15 @@
 
         document.getElementById('uploadBox').onclick = () => fileInput.click();
 
-        // 📸 Preview logic only [cite: 2026-01-18]
-        fileInput.onchange = (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                document.getElementById('imgPreview').src = ev.target.result;
-                document.getElementById('previewWrap').classList.remove('hidden');
-                document.getElementById('uploadPrompt').classList.add('hidden');
-            };
-            reader.readAsDataURL(file);
-        };
+       // 📸 Image Upload Logic
+const formData = new FormData();
+formData.append('file', file);
+formData.append('upload_preset', 'flixmarket'); // Screenshot ke mutabiq fixed name
+
+const xhr = new XMLHttpRequest();
+xhr.open('POST', 'https://api.cloudinary.com/v1_1/drwhtmufj/image/upload', true);
+
+// Baki sara progress aur Firebase ka logic wahi rahega
 
         // 🚀 Submit: First Upload to Cloudinary, then Save to Firebase [cite: 2026-01-18]
         document.getElementById('listingForm').onsubmit = async (e) => {

@@ -11,7 +11,6 @@
         :root { --primary: #6C63FF; --success: #22C55E; }
         body { background-color: #F8FAFC; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
         
-        /* ⏳ Full Screen Status Overlay [cite: 2026-01-18] */
         #statusOverlay {
             display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: white; z-index: 99999; flex-direction: column; align-items: center; justify-content: center;
@@ -55,7 +54,7 @@
                 <div id="uploadBox" class="relative border-2 border-dashed border-gray-200 rounded-2xl p-6 text-center cursor-pointer hover:border-[#6C63FF] bg-gray-50/50">
                     <div id="previewWrap" class="hidden">
                         <img id="imgPreview" class="h-40 mx-auto rounded-xl shadow-md object-cover">
-                        <p id="imgStatus" class="text-[10px] font-bold mt-2 text-gray-400 uppercase tracking-widest">Selected</p>
+                        <p class="text-[10px] font-bold mt-2 text-gray-400 uppercase tracking-widest">Image Loaded</p>
                     </div>
                     <div id="uploadPrompt">
                         <i class="fas fa-camera text-3xl text-gray-300 mb-2"></i>
@@ -104,34 +103,34 @@
         const fileInput = document.getElementById('fileInput');
         const overlay = document.getElementById('statusOverlay');
         const progressPercent = document.getElementById('progressPercent');
-        let cloudinaryUrl = "";
 
         document.getElementById('uploadBox').onclick = () => fileInput.click();
 
-       // 📸 Image Upload Logic
-const formData = new FormData();
-formData.append('file', file);
-formData.append('upload_preset', 'flixmarket'); // Screenshot ke mutabiq fixed name
+        // 🖼️ Preview [cite: 2026-01-18]
+        fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                document.getElementById('imgPreview').src = ev.target.result;
+                document.getElementById('previewWrap').classList.remove('hidden');
+                document.getElementById('uploadPrompt').classList.add('hidden');
+            };
+            reader.readAsDataURL(file);
+        };
 
-const xhr = new XMLHttpRequest();
-xhr.open('POST', 'https://api.cloudinary.com/v1_1/drwhtmufj/image/upload', true);
-
-// Baki sara progress aur Firebase ka logic wahi rahega
-
-        // 🚀 Submit: First Upload to Cloudinary, then Save to Firebase [cite: 2026-01-18]
+        // 🚀 Submit Logic [cite: 2026-01-18]
         document.getElementById('listingForm').onsubmit = async (e) => {
             e.preventDefault();
             const file = fileInput.files[0];
-            if(!file) return alert("Please select a photo first!");
+            if(!file) return alert("Photo select karein!");
 
-            // Show Loading Screen [cite: 2026-01-18]
             overlay.style.display = 'flex';
             document.getElementById('statusText').innerText = "Uploading Photo...";
 
-            // 1. Upload using XHR for progress tracking [cite: 2026-01-18]
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('upload_preset', 'ed6adf2f-027f-4a5a-a6dd-39438c909da7');
+            formData.append('upload_preset', 'flixmarket'); // Screenshot fixed name [cite: 2026-01-18]
 
             const xhr = new XMLHttpRequest();
             xhr.open('POST', 'https://api.cloudinary.com/v1_1/drwhtmufj/image/upload', true);
@@ -144,11 +143,8 @@ xhr.open('POST', 'https://api.cloudinary.com/v1_1/drwhtmufj/image/upload', true)
             };
 
             xhr.onload = async function() {
+                const response = JSON.parse(xhr.responseText);
                 if (xhr.status === 200) {
-                    const response = JSON.parse(xhr.responseText);
-                    cloudinaryUrl = response.secure_url;
-                    
-                    // 2. Save to Firebase [cite: 2026-01-18]
                     document.getElementById('statusText').innerText = "Finalizing Ad...";
                     
                     const adData = {
@@ -159,25 +155,29 @@ xhr.open('POST', 'https://api.cloudinary.com/v1_1/drwhtmufj/image/upload', true)
                         phone: document.getElementById('phone').value,
                         city: document.getElementById('city').value,
                         description: document.getElementById('desc').value,
-                        imageUrl: cloudinaryUrl,
+                        imageUrl: response.secure_url,
                         userId: auth.currentUser.uid,
                         createdAt: Date.now()
                     };
 
                     try {
                         await set(push(ref(db, 'listings')), adData);
-                        // Show Success UI [cite: 2026-01-18]
                         document.getElementById('loaderUI').classList.add('hidden');
                         document.getElementById('successUI').classList.remove('hidden');
                         setTimeout(() => { window.location.href = 'index.html'; }, 1500);
                     } catch (err) {
                         overlay.style.display = 'none';
-                        alert("Error saving: " + err.message);
+                        alert("Firebase Error: " + err.message);
                     }
                 } else {
                     overlay.style.display = 'none';
-                    alert("Cloudinary Upload Failed! Check preset settings.");
+                    alert("Upload Failed: " + (response.error ? response.error.message : "Error"));
                 }
+            };
+
+            xhr.onerror = () => {
+                overlay.style.display = 'none';
+                alert("Network error. Internet check karein.");
             };
 
             xhr.send(formData);

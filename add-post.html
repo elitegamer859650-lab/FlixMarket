@@ -11,12 +11,37 @@
         :root { --primary: #6C63FF; --secondary: #FF6584; }
         body { background-color: #F0F2F5; font-family: 'Segoe UI', sans-serif; }
         .form-card { background: white; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.04); }
-        .input-style { width: 100%; padding: 16px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; outline: none; transition: 0.3s; }
-        .input-style:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.1); }
-        .shortcut-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: white; padding: 10px 25px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: flex; gap: 20px; z-index: 1000; border: 1px solid rgba(108, 99, 255, 0.2); }
+        .input-style { width: 100%; padding: 16px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; outline: none; }
+        .input-style:focus { border-color: var(--primary); background: white; }
+        
+        /* Full Screen Loading Overlay [cite: 2026-01-18] */
+        #postingOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 9999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .flix-loader {
+            width: 50px; height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="pb-24">
+
+    <div id="postingOverlay">
+        <div class="flix-loader mb-4"></div>
+        <h2 class="text-xl font-black text-gray-800">Posting to Flix...</h2>
+        <p class="text-gray-400 text-sm">Please don't go back or close the browser.</p>
+    </div>
 
     <div class="max-w-xl mx-auto mt-8 px-4">
         <div class="form-card p-6 md:p-10">
@@ -26,59 +51,38 @@
             </header>
 
             <form id="listingForm" class="space-y-6">
-                <div id="uploadBox" class="border-2 border-dashed border-[#6C63FF] rounded-2xl p-10 text-center cursor-pointer bg-indigo-50/50 hover:bg-indigo-50 transition-all">
+                <div id="uploadBox" class="border-2 border-dashed border-[#6C63FF] rounded-2xl p-10 text-center cursor-pointer bg-indigo-50/50">
                     <div id="previewWrap" class="hidden">
-                        <img id="imgPreview" class="h-48 mx-auto rounded-xl shadow-lg border-4 border-white object-cover">
-                        <p id="uploadStatus" class="text-[#6C63FF] font-bold text-xs mt-3">Photo Selected</p>
+                        <img id="imgPreview" class="h-48 mx-auto rounded-xl shadow-lg object-cover">
+                        <p id="uploadStatus" class="text-[#6C63FF] font-bold text-xs mt-3">Ready to Post</p>
                     </div>
                     <div id="uploadPrompt">
                         <i class="fas fa-file-import text-4xl text-[#6C63FF] mb-3"></i>
                         <p class="font-bold text-gray-700">Tap to Select Photo</p>
-                        <p class="text-[10px] text-gray-400 uppercase tracking-widest mt-1">Device Files Only</p>
+                        <input type="file" id="fileInput" accept="image/*" class="hidden">
                     </div>
-                    <input type="file" id="fileInput" accept="image/*" class="hidden">
                 </div>
 
                 <div class="space-y-4">
                     <input type="text" id="title" placeholder="Item Title" class="input-style font-bold text-lg" required>
-                    
                     <div class="grid grid-cols-2 gap-4">
                         <input type="number" id="price" placeholder="Price (Rs.)" class="input-style font-bold text-[#6C63FF]" required>
-                        <select id="category" class="input-style font-semibold text-gray-600">
+                        <select id="category" class="input-style font-semibold">
                             <option value="electronics">Electronics</option>
                             <option value="vehicles">Vehicles</option>
-                            <option value="property">Property</option>
                             <option value="fashion">Fashion</option>
                         </select>
                     </div>
-
-                    <div class="space-y-3">
-                        <div class="relative">
-                            <i class="fas fa-globe absolute left-4 top-5 text-blue-400"></i>
-                            <input type="url" id="buyUrl" placeholder="Website / Buy Link (Optional)" class="input-style pl-12 border-blue-100">
-                        </div>
-                        <div class="relative">
-                            <i class="fab fa-whatsapp absolute left-4 top-5 text-green-500 text-xl"></i>
-                            <input type="tel" id="phone" placeholder="WhatsApp Number" class="input-style pl-12 border-green-100 font-bold" required>
-                        </div>
-                    </div>
-
+                    <input type="tel" id="phone" placeholder="WhatsApp Number" class="input-style font-bold" required>
                     <input type="text" id="city" placeholder="City Location" class="input-style" required>
-                    <textarea id="desc" placeholder="Write a brief description..." class="input-style h-28 resize-none"></textarea>
+                    <textarea id="desc" placeholder="Brief description..." class="input-style h-28 resize-none"></textarea>
                 </div>
 
-                <button type="submit" id="submitBtn" class="w-full bg-[#6C63FF] text-white py-4 rounded-xl font-black shadow-xl hover:bg-[#5a52d4] transition-all transform active:scale-95 uppercase">
+                <button type="submit" id="submitBtn" class="w-full bg-[#6C63FF] text-white py-4 rounded-xl font-black shadow-xl uppercase">
                     Publish My Ad
                 </button>
             </form>
         </div>
-    </div>
-
-    <div class="shortcut-bar">
-        <a href="index.html" class="text-gray-300 text-xl"><i class="fas fa-home"></i></a>
-        <a href="categories.html" class="text-gray-300 text-xl"><i class="fas fa-th-large"></i></a>
-        <a href="add-post.html" class="text-[#6C63FF] text-2xl"><i class="fas fa-plus-circle"></i></a>
-        <a href="profile.html" class="text-gray-300 text-xl"><i class="fas fa-user"></i></a>
     </div>
 
     <script type="module">
@@ -86,76 +90,56 @@
         import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBMK252DCWEfxmancNHZ5kqdoNTRgbok7A",
-            authDomain: "flix-market.firebaseapp.com",
-            databaseURL: "https://flix-market-default-rtdb.firebaseio.com",
-            projectId: "flix-market"
-        };
-
+        const firebaseConfig = { apiKey: "AIzaSyBMK252DCWEfxmancNHZ5kqdoNTRgbok7A", databaseURL: "https://flix-market-default-rtdb.firebaseio.com", projectId: "flix-market" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
 
         let currentUser = null;
         let cloudinaryUrl = "";
-
         onAuthStateChanged(auth, (user) => { if (!user) window.location.href = 'auth.html'; else currentUser = user; });
 
+        // File Selection Logic
         const fileInput = document.getElementById('fileInput');
-        const uploadBox = document.getElementById('uploadBox');
+        document.getElementById('uploadBox').onclick = () => fileInput.click();
 
-        // Trigger Files App [cite: 2026-01-17]
-        uploadBox.addEventListener('click', () => fileInput.click());
-
-        // Background Cloudinary Upload [cite: 2026-01-18]
-        fileInput.addEventListener('change', async (e) => {
+        fileInput.onchange = async (e) => {
             const file = e.target.files[0];
             if (!file) return;
 
-            // Show Local Preview [cite: 2026-01-18]
+            // Preview
             const reader = new FileReader();
-            reader.onload = (event) => {
-                document.getElementById('imgPreview').src = event.target.result;
+            reader.onload = (ev) => {
+                document.getElementById('imgPreview').src = ev.target.result;
                 document.getElementById('previewWrap').classList.remove('hidden');
                 document.getElementById('uploadPrompt').classList.add('hidden');
             };
             reader.readAsDataURL(file);
 
-            // Upload to Cloudinary [cite: 2026-01-18]
+            // Cloudinary Upload
             const formData = new FormData();
             formData.append('file', file);
             formData.append('upload_preset', 'ed6adf2f-027f-4a5a-a6dd-39438c909da7');
 
             try {
-                document.getElementById('uploadStatus').innerText = "Uploading to Cloud...";
-                const res = await fetch('https://api.cloudinary.com/v1_1/drwhtmufj/image/upload', {
-                    method: 'POST',
-                    body: formData
-                });
+                const res = await fetch('https://api.cloudinary.com/v1_1/drwhtmufj/image/upload', { method: 'POST', body: formData });
                 const data = await res.json();
                 cloudinaryUrl = data.secure_url;
-                document.getElementById('uploadStatus').innerText = "✅ Cloud Sync Complete";
-            } catch (err) {
-                alert("Cloudinary Error. Try again.");
-                location.reload();
-            }
-        });
+            } catch (err) { alert("Upload failed!"); }
+        };
 
-        // Submit to Firebase [cite: 2026-01-18]
-        document.getElementById('listingForm').addEventListener('submit', async (e) => {
+        // 🚀 Submit with Loading Overlay [cite: 2026-01-18]
+        document.getElementById('listingForm').onsubmit = async (e) => {
             e.preventDefault();
-            if(!cloudinaryUrl) return alert("Please wait, image is still uploading...");
+            if(!cloudinaryUrl) return alert("Please wait for image upload...");
 
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.innerText = "Syncing Ads...";
-
+            // Show Loader & Lock Screen [cite: 2026-01-18]
+            document.getElementById('postingOverlay').style.display = 'flex';
+            
             const adData = {
                 title: document.getElementById('title').value,
                 price: document.getElementById('price').value,
                 category: document.getElementById('category').value,
-                buyUrl: document.getElementById('buyUrl').value,
                 phone: document.getElementById('phone').value,
                 city: document.getElementById('city').value,
                 description: document.getElementById('desc').value,
@@ -166,14 +150,12 @@
 
             try {
                 await set(push(ref(db, 'listings')), adData);
-                alert("Ad is LIVE!");
                 window.location.href = 'index.html';
             } catch (err) {
                 alert(err.message);
-                btn.disabled = false;
-                btn.innerText = "Publish My Ad";
+                document.getElementById('postingOverlay').style.display = 'none';
             }
-        });
+        };
     </script>
 </body>
 </html>

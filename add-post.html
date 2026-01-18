@@ -10,61 +10,55 @@
     <style>
         :root { --primary: #6C63FF; --secondary: #FF6584; }
         body { background-color: #F0F2F5; font-family: 'Segoe UI', sans-serif; }
-        .form-card { background: white; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.04); }
-        .input-style { width: 100%; padding: 16px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; outline: none; }
-        .input-style:focus { border-color: var(--primary); background: white; }
         
-        /* Full Screen Loading Overlay [cite: 2026-01-18] */
+        /* ⏳ Full Screen Loading Overlay [cite: 2026-01-18] */
         #postingOverlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            z-index: 9999;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.98); z-index: 9999;
+            flex-direction: column; align-items: center; justify-content: center;
         }
         .flix-loader {
-            width: 50px; height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--primary);
-            border-radius: 50%;
+            width: 60px; height: 60px; border: 6px solid #f3f3f3;
+            border-top: 6px solid var(--primary); border-radius: 50%;
             animation: spin 1s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .form-card { background: white; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.04); }
+        .input-style { width: 100%; padding: 16px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; outline: none; }
     </style>
 </head>
 <body class="pb-24">
 
     <div id="postingOverlay">
         <div class="flix-loader mb-4"></div>
-        <h2 class="text-xl font-black text-gray-800">Posting to Flix...</h2>
-        <p class="text-gray-400 text-sm">Please don't go back or close the browser.</p>
+        <h2 class="text-2xl font-black text-gray-800">Posting to Flix...</h2>
+        <p class="text-gray-400">Please wait, uploading your ad.</p>
     </div>
 
     <div class="max-w-xl mx-auto mt-8 px-4">
         <div class="form-card p-6 md:p-10">
             <header class="text-center mb-8">
-                <h1 class="text-3xl font-black text-gray-800">Sell an Item</h1>
-                <p class="text-gray-500 text-sm mt-1">Directly upload from your device storage</p>
+                <h1 class="text-3xl font-black text-gray-800 italic">FLIX MARKET</h1>
+                <p class="text-gray-500 text-sm">Upload item directly from your device</p>
             </header>
 
             <form id="listingForm" class="space-y-6">
-                <div id="uploadBox" class="border-2 border-dashed border-[#6C63FF] rounded-2xl p-10 text-center cursor-pointer bg-indigo-50/50">
+                <div id="uploadBox" class="border-2 border-dashed border-[#6C63FF] rounded-2xl p-10 text-center cursor-pointer bg-indigo-50/30">
                     <div id="previewWrap" class="hidden">
-                        <img id="imgPreview" class="h-48 mx-auto rounded-xl shadow-lg object-cover">
-                        <p id="uploadStatus" class="text-[#6C63FF] font-bold text-xs mt-3">Ready to Post</p>
+                        <img id="imgPreview" class="h-48 mx-auto rounded-xl shadow-lg border-2 border-white object-cover">
+                        <p id="uploadStatus" class="text-[#6C63FF] font-bold text-xs mt-3">Image Selected</p>
                     </div>
                     <div id="uploadPrompt">
-                        <i class="fas fa-file-import text-4xl text-[#6C63FF] mb-3"></i>
-                        <p class="font-bold text-gray-700">Tap to Select Photo</p>
+                        <i class="fas fa-cloud-upload-alt text-4xl text-[#6C63FF] mb-3"></i>
+                        <p class="font-bold text-gray-700">Select Product Photo</p>
                         <input type="file" id="fileInput" accept="image/*" class="hidden">
                     </div>
                 </div>
 
                 <div class="space-y-4">
-                    <input type="text" id="title" placeholder="Item Title" class="input-style font-bold text-lg" required>
+                    <input type="text" id="title" placeholder="What are you selling?" class="input-style font-bold" required>
+                    
                     <div class="grid grid-cols-2 gap-4">
                         <input type="number" id="price" placeholder="Price (Rs.)" class="input-style font-bold text-[#6C63FF]" required>
                         <select id="category" class="input-style font-semibold">
@@ -73,9 +67,12 @@
                             <option value="fashion">Fashion</option>
                         </select>
                     </div>
-                    <input type="tel" id="phone" placeholder="WhatsApp Number" class="input-style font-bold" required>
-                    <input type="text" id="city" placeholder="City Location" class="input-style" required>
-                    <textarea id="desc" placeholder="Brief description..." class="input-style h-28 resize-none"></textarea>
+
+                    <input type="url" id="buyUrl" placeholder="Website Link (Optional)" class="input-style border-blue-50">
+                    
+                    <input type="tel" id="phone" placeholder="WhatsApp Number (923...)" class="input-style font-bold text-green-600" required>
+                    <input type="text" id="city" placeholder="City" class="input-style" required>
+                    <textarea id="desc" placeholder="Product Description..." class="input-style h-24 resize-none"></textarea>
                 </div>
 
                 <button type="submit" id="submitBtn" class="w-full bg-[#6C63FF] text-white py-4 rounded-xl font-black shadow-xl uppercase">
@@ -90,16 +87,21 @@
         import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyBMK252DCWEfxmancNHZ5kqdoNTRgbok7A", databaseURL: "https://flix-market-default-rtdb.firebaseio.com", projectId: "flix-market" };
+        const firebaseConfig = { 
+            apiKey: "AIzaSyBMK252DCWEfxmancNHZ5kqdoNTRgbok7A", 
+            databaseURL: "https://flix-market-default-rtdb.firebaseio.com", 
+            projectId: "flix-market" 
+        };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
 
         let currentUser = null;
-        let cloudinaryUrl = "";
+        let finalImageUrl = "";
+
         onAuthStateChanged(auth, (user) => { if (!user) window.location.href = 'auth.html'; else currentUser = user; });
 
-        // File Selection Logic
+        // Handle File Selection [cite: 2026-01-17, 2026-01-18]
         const fileInput = document.getElementById('fileInput');
         document.getElementById('uploadBox').onclick = () => fileInput.click();
 
@@ -107,7 +109,7 @@
             const file = e.target.files[0];
             if (!file) return;
 
-            // Preview
+            // Preview local image [cite: 2026-01-18]
             const reader = new FileReader();
             reader.onload = (ev) => {
                 document.getElementById('imgPreview').src = ev.target.result;
@@ -116,34 +118,39 @@
             };
             reader.readAsDataURL(file);
 
-            // Cloudinary Upload
+            // ☁️ Upload to Cloudinary (No Redirection) [cite: 2026-01-18]
             const formData = new FormData();
             formData.append('file', file);
             formData.append('upload_preset', 'ed6adf2f-027f-4a5a-a6dd-39438c909da7');
 
             try {
+                document.getElementById('uploadStatus').innerText = "Syncing with Cloud...";
                 const res = await fetch('https://api.cloudinary.com/v1_1/drwhtmufj/image/upload', { method: 'POST', body: formData });
                 const data = await res.json();
-                cloudinaryUrl = data.secure_url;
-            } catch (err) { alert("Upload failed!"); }
+                finalImageUrl = data.secure_url;
+                document.getElementById('uploadStatus').innerText = "✅ Image Ready";
+            } catch (err) {
+                alert("Cloudinary Error: Check your internet.");
+            }
         };
 
-        // 🚀 Submit with Loading Overlay [cite: 2026-01-18]
+        // 🚀 Final Post to Firebase [cite: 2026-01-18]
         document.getElementById('listingForm').onsubmit = async (e) => {
             e.preventDefault();
-            if(!cloudinaryUrl) return alert("Please wait for image upload...");
+            if(!finalImageUrl) return alert("Wait! Image is still uploading.");
 
-            // Show Loader & Lock Screen [cite: 2026-01-18]
+            // Show Full Screen Loading [cite: 2026-01-18]
             document.getElementById('postingOverlay').style.display = 'flex';
             
             const adData = {
                 title: document.getElementById('title').value,
                 price: document.getElementById('price').value,
                 category: document.getElementById('category').value,
+                buyUrl: document.getElementById('buyUrl').value,
                 phone: document.getElementById('phone').value,
                 city: document.getElementById('city').value,
                 description: document.getElementById('desc').value,
-                imageUrl: cloudinaryUrl,
+                imageUrl: finalImageUrl,
                 userId: currentUser.uid,
                 createdAt: Date.now()
             };
@@ -152,8 +159,8 @@
                 await set(push(ref(db, 'listings')), adData);
                 window.location.href = 'index.html';
             } catch (err) {
-                alert(err.message);
                 document.getElementById('postingOverlay').style.display = 'none';
+                alert("Firebase Error: " + err.message);
             }
         };
     </script>

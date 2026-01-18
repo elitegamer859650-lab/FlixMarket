@@ -27,43 +27,79 @@
 
             <form id="listingForm" class="space-y-5">
                 
-                <div id="uploadBox" class="upload-area rounded-2xl p-8 text-center relative overflow-hidden">
-                    <div id="previewWrap" class="hidden">
-                        <img id="imgPreview" class="h-40 mx-auto rounded-lg mb-2 object-cover border-2 border-[#6C63FF]">
-                        <p class="text-xs text-[#6C63FF] font-bold">Image Ready to Post</p>
-                    </div>
-                    <div id="uploadPrompt">
-                        <i class="fas fa-camera text-4xl text-gray-300 mb-3"></i>
-                        <p class="text-gray-500 font-semibold">Tap to select photo</p>
-                        <p class="text-[10px] text-gray-400">Your photo will be saved on Cloudinary</p>
-                    </div>
-                </div>
-
-                <div class="space-y-4">
-                    <input type="text" id="title" placeholder="What are you selling?" class="w-full p-4 bg-gray-50 border-none rounded-xl outline-none focus:ring-2 ring-[#6C63FF]/30" required>
-                    
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="number" id="price" placeholder="Price (Rs.)" class="p-4 bg-gray-50 border-none rounded-xl outline-none focus:ring-2 ring-[#6C63FF]/30" required>
-                        <select id="category" class="p-4 bg-gray-50 border-none rounded-xl outline-none focus:ring-2 ring-[#6C63FF]/30">
-                            <option value="electronics">Electronics</option>
-                            <option value="vehicles">Vehicles</option>
-                            <option value="fashion">Fashion</option>
-                        </select>
-                    </div>
-
-                    <input type="url" id="buyUrl" placeholder="Website Link (Optional)" class="w-full p-4 bg-gray-50 border-none rounded-xl outline-none focus:ring-2 ring-[#6C63FF]/30">
-                    <input type="tel" id="phone" placeholder="WhatsApp No (e.g. 92300...)" class="w-full p-4 bg-gray-50 border-none rounded-xl outline-none focus:ring-2 ring-[#6C63FF]/30 font-bold text-green-600" required>
-                    
-                    <textarea id="desc" placeholder="Describe your item..." class="w-full p-4 bg-gray-50 border-none rounded-xl h-24 outline-none focus:ring-2 ring-[#6C63FF]/30"></textarea>
-                </div>
-
-                <button type="submit" id="submitBtn" class="w-full bg-[#6C63FF] text-white py-4 rounded-xl font-bold shadow-lg hover:bg-[#5a52d4] transition-all transform active:scale-95">
-                    PUBLISH AD
-                </button>
-            </form>
-        </div>
+               <div id="uploadBox" class="border-3 border-dashed border-[#6C63FF] rounded-2xl p-8 text-center cursor-pointer bg-indigo-50/50 hover:bg-indigo-50 transition-all">
+    <div id="previewWrap" class="hidden">
+        <img id="imgPreview" class="h-40 mx-auto rounded-lg mb-2 shadow-md">
+        <p class="text-xs text-[#6C63FF] font-bold">Photo Selected</p>
     </div>
+    <div id="uploadPrompt">
+        <i class="fas fa-file-upload text-4xl text-[#6C63FF] mb-3"></i>
+        <p class="font-bold text-gray-700">Tap to Select Photo</p>
+        <p class="text-[10px] text-gray-400">Opens your device files directly</p>
+    </div>
+    <input type="file" id="fileInput" accept="image/*" class="hidden">
+</div>
 
+<script type="module">
+    // ... Firebase Config (Wahi purani rahegi) ...
+
+    const fileInput = document.getElementById('fileInput');
+    const uploadBox = document.getElementById('uploadBox');
+    let cloudinaryUrl = "";
+
+    // 1. Trigger File App [cite: 2026-01-17]
+    uploadBox.addEventListener('click', () => fileInput.click());
+
+    // 2. Handle File Selection & Cloudinary Upload [cite: 2026-01-18]
+    fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Preview dikhao foran [cite: 2026-01-18]
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            document.getElementById('imgPreview').src = event.target.result;
+            document.getElementById('previewWrap').classList.remove('hidden');
+            document.getElementById('uploadPrompt').classList.add('hidden');
+        };
+        reader.readAsDataURL(file);
+
+        // Cloudinary Background Upload [cite: 2026-01-18]
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', 'ed6adf2f-027f-4a5a-a6dd-39438c909da7'); // Aapka preset
+
+        try {
+            const res = await fetch('https://api.cloudinary.com/v1_1/drwhtmufj/image/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            cloudinaryUrl = data.secure_url;
+            console.log("Cloudinary Sync Done:", cloudinaryUrl);
+        } catch (err) {
+            alert("Upload failed. Try again.");
+        }
+    });
+
+    // 3. Final Submit to Firebase [cite: 2026-01-18]
+    document.getElementById('listingForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if(!cloudinaryUrl) return alert("Please wait for image to finish uploading...");
+
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerText = "Publishing...";
+
+        const adData = {
+            title: document.getElementById('title').value,
+            price: document.getElementById('price').value,
+            buyUrl: document.getElementById('buyUrl').value,
+            phone: document.getElementById('phone').value,
+            imageUrl: cloudinaryUrl,
+            userId: auth.currentUser.uid,
+            createdAt: Date.now()
+        };
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
